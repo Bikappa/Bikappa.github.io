@@ -1,30 +1,32 @@
-import React, { createRef, RefObject, useRef } from 'react'
+import React, { createRef, RefObject } from 'react'
 import logo from './logo.png'
 import './App.css'
 import { Spacer, IntroductionSlide } from './components'
 
 import { Fab, makeStyles, Theme, Typography, Box } from '@material-ui/core'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import { createMuiTheme, darken, ThemeProvider } from '@material-ui/core/styles'
 import { grey } from '@material-ui/core/colors'
 import '@fontsource/oxygen'
 import { ArrowDownward } from '@material-ui/icons'
-import { Element, scroller } from 'react-scroll'
+import { Element } from 'react-scroll'
 import { slide } from './styles'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useCallback } from 'react'
 import { joinClasses } from './utils'
-import gsap from 'gsap/all'
+import gsap from 'gsap'
 
 const theme = createMuiTheme({
   palette: {
+    mode: 'dark',
     background: {
       default: grey[900],
-    },
+      paper: darken(grey[900], 0.1),
+    },   
   },
   typography: {
     fontFamily: 'Oxygen',
-    fontSize: 15
+    fontSize: 15,
   },
 })
 
@@ -37,7 +39,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
   },
   logo: {
-    height: '30vh'
+    height: '30vh',
+    '& > img': {
+      maxHeight: '90%',
+      maxWidth: '90%',
+    }
   },
   name: {
     color: grey[800],
@@ -182,7 +188,10 @@ function Landing(props: {
   return <Box component='header' {...{ ref: headerRef }}  {...joinClasses(classes.slide, classes.appHeader)} height='100vh'>
     {/* <Box flexGrow={1} /> */}
     <Box>
-      <img ref={logoRef} src={logo} className={classes.logo} alt='logo' />
+      <Box className={classes.logo} ref={logoRef} >
+        <img src={logo} alt='logo' />
+      </Box>
+     
       <Typography ref={nameRef} {...joinClasses(classes.name)} variant='h4'>
         Luca Bianconi
       </Typography>

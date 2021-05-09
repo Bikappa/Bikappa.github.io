@@ -23,6 +23,7 @@ import { Spacer } from "./spacer";
 
 const useStyles = makeStyles((theme: Theme) => {
   const cardBgColor = darken(theme.palette.background.default, 0.1)
+
   const cardColor = theme.palette.getContrastText(cardBgColor)
   const darkText = darken(cardColor, 0.7)
 
@@ -39,9 +40,7 @@ const useStyles = makeStyles((theme: Theme) => {
       cursor: 'pointer'
     },
     card: {
-      backgroundColor: cardBgColor,
-      color: cardColor,
-      /*height: '25vh',*/
+      color: 'white',
       width: '100%',
       padding: '20px',
       boxSizing: 'border-box'
@@ -99,14 +98,16 @@ export function IntroductionSlide() {
   const ageUnit = ageUnitRotation[ageUnitIdx]
 
   const IntroCard = ({ content, footer }: { content: React.ReactNode, footer?: React.ReactNode }) => {
-    return (<Paper variant='outlined' elevation={1} className={classes.card}>
-      <Box display='flex' flexDirection='column' height='100%'>
-        <Box flexGrow={1}>
-          {content}
+    return (
+      <Paper variant='outlined' elevation={1} className={classes.card}>
+        <Box display='flex' flexDirection='column' height='100%'>
+          <Box flexGrow={1}>
+            {content}
+          </Box>
+          {footer}
         </Box>
-        {footer}
-      </Box>
-    </Paper>)
+      </Paper>
+    )
   }
 
 
@@ -165,7 +166,7 @@ export function IntroductionSlide() {
       <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' flexBasis='33.33%' maxWidth='33%'>
         <Box maxHeight='230px' overflow='hidden' borderRadius={5} mt={3} mb={3}>
           <Box mt='-115px'>
-          <img alt='Travel' width='100%' src='https://lh3.googleusercontent.com/HGHrioS-mqNzMKvxoJwu7vrTj5K67ozuay6nVOmwuVDeSv7A82iUIaTkOkAk5Mnlycg0SMNOjlnVERcKILr7AQxn75bkHyXOfr9fUvGKS3p2QmoYR4ns95rOU-tsDgeo0W4kZR-tZRxcEtLBLKXGr2gTSKCR0YxwUMaz7d5-9peOQL4XUfl6zgYUlHsKVYLKrktP4TsoTYxBilNS1e7lKprayRYXiKF-chDjBpQFqBQUUstJkqCZowjfmmuvtF1uyj54kb_Vicui-O12fdRfp53eydTc-RiWmhPWaXMKdolzP8DiBxmV7cuBqaKsPrGNzH-gRCbHY7zFzf-aN7IL6DVf3IeTRCMMHWRptYwUJhogF22hhpiA3bSithHcUyc5xbXWuXSPcoVAnv3bGG4lpqfcxwRwPaaHoa5uosPU-k-gZ5n6UOSeYNFp-b_6Q9WgJvuPJOe0gQl0hKvd64U8pUeay7CcNhXV_Pv784pzHdzYBkmXJ89aRYb-Z3PyeDZpNlGXPsdS_qsw2jxgppl6NPHGyzee3l2g9utQJktnZKVdG2TSjvS7AUMTh2gmhLIoyu5nABcObVINTamWv0WH5nttOXu-8rTbVWZbTVmLU7XV7Ej8ZuFqbeHy0ZsL9yjvA1vwRmgxnWSeRZU3unjdtPoV1xss0RP5PNXmNIsrhvbnPrWpSjdMPCr1Y436UEwBPRQMbocxTzpv5DrMXKTHOAQq3Q=s937-no?authuser=0' ></img>
+            <img alt='Travel' width='100%' src='https://lh3.googleusercontent.com/HGHrioS-mqNzMKvxoJwu7vrTj5K67ozuay6nVOmwuVDeSv7A82iUIaTkOkAk5Mnlycg0SMNOjlnVERcKILr7AQxn75bkHyXOfr9fUvGKS3p2QmoYR4ns95rOU-tsDgeo0W4kZR-tZRxcEtLBLKXGr2gTSKCR0YxwUMaz7d5-9peOQL4XUfl6zgYUlHsKVYLKrktP4TsoTYxBilNS1e7lKprayRYXiKF-chDjBpQFqBQUUstJkqCZowjfmmuvtF1uyj54kb_Vicui-O12fdRfp53eydTc-RiWmhPWaXMKdolzP8DiBxmV7cuBqaKsPrGNzH-gRCbHY7zFzf-aN7IL6DVf3IeTRCMMHWRptYwUJhogF22hhpiA3bSithHcUyc5xbXWuXSPcoVAnv3bGG4lpqfcxwRwPaaHoa5uosPU-k-gZ5n6UOSeYNFp-b_6Q9WgJvuPJOe0gQl0hKvd64U8pUeay7CcNhXV_Pv784pzHdzYBkmXJ89aRYb-Z3PyeDZpNlGXPsdS_qsw2jxgppl6NPHGyzee3l2g9utQJktnZKVdG2TSjvS7AUMTh2gmhLIoyu5nABcObVINTamWv0WH5nttOXu-8rTbVWZbTVmLU7XV7Ej8ZuFqbeHy0ZsL9yjvA1vwRmgxnWSeRZU3unjdtPoV1xss0RP5PNXmNIsrhvbnPrWpSjdMPCr1Y436UEwBPRQMbocxTzpv5DrMXKTHOAQq3Q=s937-no?authuser=0' ></img>
           </Box>
         </Box>
 
