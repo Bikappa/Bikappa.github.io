@@ -1,4 +1,5 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles, Theme, Box, BoxProps } from '@material-ui/core'
+import { RefObject } from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -7,15 +8,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     colored: {
         backgroundColor: theme.palette.primary.dark,
-        height: theme.spacing(1),
         width: theme.spacing(8),
-        display: 'inline-block'
+        display: 'inline-block',
+        height: theme.spacing(1),
+        borderRadius: theme.shape.borderRadius
     }
 }));
 
-export function Spacer() {
+export function Spacer(props: BoxProps) {
     const classes = useStyles();
-    return <div className={classes.root}>
+    return <Box className={classes.root} {...props}>
         <span className={classes.colored}/>
-    </div>
+    </Box>
 }

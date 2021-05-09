@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { createRef, RefObject, useRef } from 'react'
 import logo from './logo.png'
 import './App.css'
-import { Spacer } from './components'
-
+import { Spacer, IntroductionSlide } from './components'
 
 import { Fab, makeStyles, Theme, Typography, Box } from '@material-ui/core'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
@@ -10,7 +9,12 @@ import { grey } from '@material-ui/core/colors'
 import '@fontsource/oxygen'
 import { ArrowDownward } from '@material-ui/icons'
 import { Element, scroller } from 'react-scroll'
-
+import { slide } from './styles'
+import { useEffect } from 'react'
+import { useState } from 'react'
+import { useCallback } from 'react'
+import { joinClasses } from './utils'
+import gsap from 'gsap/all'
 
 const theme = createMuiTheme({
   palette: {
@@ -19,7 +23,8 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: 'Oxygen'
+    fontFamily: 'Oxygen',
+    fontSize: 15
   },
 })
 
@@ -29,10 +34,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: theme.typography.fontFamily
   },
   appHeader: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   logo: {
-    width: '300px'
+    height: '30vh'
   },
   name: {
     color: grey[800],
@@ -43,22 +48,16 @@ const useStyles = makeStyles((theme: Theme) => ({
       content: '")"'
     },
     margin: theme.spacing(3),
+    overflow: 'hidden',
+    '&.collapsed': {
+      height: '0px !important',
+    }
   },
   title: {
     color: grey[500],
     margin: theme.spacing(3),
   },
-  grow: {
-    flexGrow: 1,
-  },
-  slide: {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 'calc(10px + 2vmin)'
-  }
+  slide
 }))
 
 
@@ -73,52 +72,134 @@ function App() {
 function InsideTheme() {
   const classes = useStyles()
 
-  const nextHandler = () => {
-    scroller.scrollTo('introduction', {
-      smooth: 'true'
+  const [scrolled, setScrolled] = useState(false);
+
+  const handleScroll = useCallback((e: WheelEvent) => {
+    setScrolled((prev) => {
+
+      if (window.scrollY < 20 && e.deltaY < 0) {
+        return false
+      } else if (e.deltaY > 0 && window.scrollY >= 20) {
+        return true
+      }
+
+      return prev
     })
+  }, [setScrolled])
+
+  useEffect(() => {
+
+    document.addEventListener('wheel', handleScroll)
+
+    return () => {
+      document.removeEventListener('wheel', handleScroll)
+    }
+  })
+
+  const nextHandler = () => {
+    // scroller.scrollTo('introduction', {
+    //   smooth: 'true'
+    // })
   }
+
   return (
     <div className={classes.root}>
-      <Landing onNext={nextHandler} />
+      <Landing onNext={nextHandler} collapsed={scrolled} />
       <Element name='introduction'>
-        <Introduction />
+        <IntroductionSlide />
       </Element>
     </div >
   )
 }
 
 
-function Introduction() {
-  const classes = useStyles()
-  return <div className={`${classes.slide} ${classes.appHeader}`}> <h1>Introduction</h1></div>
-}
+// register the effect with GSAP:
+gsap.registerEffect({
+  name: 'fade',
+  effect: (targets: gsap.TweenTarget, config: gsap.TweenVars) => {
+    return gsap.timeline().to(targets, { duration: config.duration, opacity: 0 })
+      .to(targets, { height: 0, margin: '0px', duration: 0.3}, 0.5)
+      .to(targets, { display: 'none' }, 0.8);
+  },
+  defaults: { duration: 0.8 },
+  extendTimeline: true,
+});
 
-function Landing({
-  onNext
-}: {
-  onNext: () => void
+function Landing(props: {
+  onNext: () => void,
+  collapsed: boolean,
 }) {
+
+  const { onNext, collapsed } = props
   const classes = useStyles()
-  return (<header className={classes.slide + ' ' + classes.appHeader}>
-    <div className={classes.grow} />
+  const refs: RefObject<HTMLElement>[] = new Array(6).fill(null).map(() => createRef())
+  const [[
+    nameRef,
+    titleRef,
+    headerRef,
+    nextButtonRef,
+    spacerRef,
+    logoRef]] = useState(refs)
+
+  const [tween] = useState(gsap.timeline({ repeat: 0 }).pause())
+  useEffect(() => {
+
+    tween.to(nameRef.current, {
+      duration: 0.5,
+      height: 0,
+      margin: 0,
+    }, 0)
+      .fade(titleRef.current, {}, 0)
+      .fade(nextButtonRef.current, {}, 0)
+      .to(headerRef.current, {
+        duration: 0.8,
+        height: '7vh',
+        minHeight: '7vh'
+      }, 0.2)
+      .to(logoRef.current, {
+        duration: 0.8,
+        height: '6vh'
+      }, 0)
+      .fade(spacerRef.current)
+      .to(spacerRef.current, {
+        duration: 0.4,
+        x: '60vw'
+      }, 0)
+
+  }, [nameRef, titleRef, headerRef, nextButtonRef, logoRef, spacerRef, tween])
+
+  useEffect(() => {
+
+    if (collapsed) {
+      tween.play();
+    }
+    if (!collapsed) {
+      tween.reverse();
+    }
+
+  }, [collapsed, tween])
+
+  return <Box component='header' {...{ ref: headerRef }}  {...joinClasses(classes.slide, classes.appHeader)} height='100vh'>
+    {/* <Box flexGrow={1} /> */}
     <Box>
-      <img src={logo} className={classes.logo} alt='logo' />
-      <Typography className={classes.name} variant='h4'>
+      <img ref={logoRef} src={logo} className={classes.logo} alt='logo' />
+      <Typography ref={nameRef} {...joinClasses(classes.name)} variant='h4'>
         Luca Bianconi
       </Typography>
-      <Spacer />
-      <Typography className={classes.title} variant='h5'>
+      <Box {...{ ref: spacerRef }}>
+        <Spacer />
+      </Box>
+      <Typography ref={titleRef} className={classes.title} variant='h5'>
         Software Engineer &middot; Technology enthusiast &middot; Creative individual
       </Typography>
     </Box>
-    <div className={classes.grow} />
-    <Box m={3}>
+    {/* <Box flexGrow={1} /> */}
+    <Box m={3} {...{ ref: nextButtonRef }}>
       <Fab color='primary' aria-label='edit' className='' onClick={onNext}>
         <ArrowDownward />
       </Fab>
     </Box>
-  </header>)
+  </Box>
 }
 
 export default App
