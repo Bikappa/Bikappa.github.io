@@ -4,7 +4,7 @@ import './App.css'
 import { Spacer, IntroductionSlide } from './components'
 
 import { Fab, makeStyles, Theme, Typography, Box } from '@material-ui/core'
-import { createMuiTheme, darken, ThemeProvider } from '@material-ui/core/styles'
+import { createMuiTheme, darken, easing, ThemeProvider } from '@material-ui/core/styles'
 import { grey } from '@material-ui/core/colors'
 import '@fontsource/oxygen'
 import { ArrowDownward } from '@material-ui/icons'
@@ -22,7 +22,7 @@ const theme = createMuiTheme({
     background: {
       default: grey[900],
       paper: darken(grey[900], 0.1),
-    },   
+    },
   },
   typography: {
     fontFamily: 'Oxygen',
@@ -80,24 +80,37 @@ function InsideTheme() {
 
   const [scrolled, setScrolled] = useState(false);
 
-  const handleScroll = useCallback((e: WheelEvent) => {
-    setScrolled((prev) => {
+  const [lastScrollDir, setLastScrollDir] = useState(0)
+  const handleScroll = useCallback((e: WheelEvent | Event) => {
 
-      if (window.scrollY < 20 && e.deltaY < 0) {
-        return false
-      } else if (e.deltaY > 0 && window.scrollY >= 20) {
-        return true
+    if (e instanceof WheelEvent) {
+      if (window.scrollY === 0 && e.deltaY < 0) {
+        setScrolled(false)
+      } else {
+        setLastScrollDir(e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0))
       }
 
-      return prev
-    })
-  }, [setScrolled])
+    } else {
+      setScrolled((prev) => {
+        if (window.scrollY > 0 && lastScrollDir === 1) {
+          return true
+        } else if (window.scrollY === 0 && lastScrollDir === -1) {
+          return false
+        }
+        return prev
+
+      })
+    }
+
+  }, [setScrolled, lastScrollDir])
 
   useEffect(() => {
 
-    document.addEventListener('wheel', handleScroll)
+    document.addEventListener('scroll', handleScroll)
 
+    document.addEventListener('wheel', handleScroll)
     return () => {
+      document.removeEventListener('scroll', handleScroll)
       document.removeEventListener('wheel', handleScroll)
     }
   })
@@ -124,8 +137,8 @@ gsap.registerEffect({
   name: 'fade',
   effect: (targets: gsap.TweenTarget, config: gsap.TweenVars) => {
     return gsap.timeline().to(targets, { duration: config.duration, opacity: 0 })
-      .to(targets, { height: 0, margin: '0px', duration: 0.3}, 0.5)
-      .to(targets, { display: 'none' }, 0.8);
+      .to(targets, { height: 0, margin: '0px', duration: 0.3 }, 0.5)
+      .to(targets, { display: 'none', duration: 0 }, 0.8);
   },
   defaults: { duration: 0.8 },
   extendTimeline: true,
@@ -138,13 +151,14 @@ function Landing(props: {
 
   const { onNext, collapsed } = props
   const classes = useStyles()
-  const refs: RefObject<HTMLElement>[] = new Array(6).fill(null).map(() => createRef())
+  const refs: RefObject<HTMLElement>[] = new Array(7).fill(null).map(() => createRef())
   const [[
     nameRef,
     titleRef,
     headerRef,
     nextButtonRef,
     spacerRef,
+    spaceHolderRef,
     logoRef]] = useState(refs)
 
   const [tween] = useState(gsap.timeline({ repeat: 0 }).pause())
@@ -155,8 +169,14 @@ function Landing(props: {
       height: 0,
       margin: 0,
     }, 0)
+      .to(nameRef.current, {
+        display: 'none',
+        duration: 0
+      }, 0.5)
       .fade(titleRef.current, {}, 0)
-      .fade(nextButtonRef.current, {}, 0)
+      .fade(nextButtonRef.current, {
+        duration: 0.3
+      }, 0)
       .to(headerRef.current, {
         duration: 0.8,
         height: '7vh',
@@ -171,8 +191,14 @@ function Landing(props: {
         duration: 0.4,
         x: '60vw'
       }, 0)
+      //reduce the space held by the header, so next slide enter the view
+      .to(spaceHolderRef.current, {
+        duration: 0.8,
+        height: '7vh',
+        ease: 'power2'
+      }, 0.5)
 
-  }, [nameRef, titleRef, headerRef, nextButtonRef, logoRef, spacerRef, tween])
+  }, [nameRef, titleRef, headerRef, nextButtonRef, logoRef, spacerRef, spaceHolderRef, tween])
 
   useEffect(() => {
 
@@ -185,30 +211,42 @@ function Landing(props: {
 
   }, [collapsed, tween])
 
-  return <Box component='header' {...{ ref: headerRef }}  {...joinClasses(classes.slide, classes.appHeader)} height='100vh'>
-    {/* <Box flexGrow={1} /> */}
-    <Box>
-      <Box className={classes.logo} ref={logoRef} >
-        <img src={logo} alt='logo' />
+  return <>
+    <Box 
+    component='header' 
+    ref={headerRef }  
+    {...joinClasses(classes.slide, classes.appHeader)} 
+    height='100vh' 
+    width='100vw' 
+    position='fixed' 
+    top='0px'
+    justifyContent='stretch'
+    >
+      <Box flexGrow={1} minHeight='1vh' />
+      <Box>
+        <Box className={classes.logo} ref={logoRef} >
+          <img src={logo} alt='logo' />
+        </Box>
+
+        <Typography ref={nameRef} {...joinClasses(classes.name)} variant='h4'>
+          Luca Bianconi
+        </Typography>
+        <Box {...{ ref: spacerRef }}>
+          <Spacer />
+        </Box>
+        <Typography ref={titleRef} className={classes.title} variant='h5'>
+          Software Engineer &middot; Technology enthusiast &middot; Creative individual
+        </Typography>
       </Box>
-     
-      <Typography ref={nameRef} {...joinClasses(classes.name)} variant='h4'>
-        Luca Bianconi
-      </Typography>
-      <Box {...{ ref: spacerRef }}>
-        <Spacer />
+      <Box flexGrow={1} />
+      <Box m={3} {...{ ref: nextButtonRef }}>
+        <Fab color='primary' aria-label='edit' className='' onClick={onNext}>
+          <ArrowDownward />
+        </Fab>
       </Box>
-      <Typography ref={titleRef} className={classes.title} variant='h5'>
-        Software Engineer &middot; Technology enthusiast &middot; Creative individual
-      </Typography>
     </Box>
-    {/* <Box flexGrow={1} /> */}
-    <Box m={3} {...{ ref: nextButtonRef }}>
-      <Fab color='primary' aria-label='edit' className='' onClick={onNext}>
-        <ArrowDownward />
-      </Fab>
-    </Box>
-  </Box>
+    <Box height='100vh' ref={spaceHolderRef} />
+  </>
 }
 
 export default App

@@ -4,6 +4,6 @@ export const slide: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'start',
   fontSize: 'calc(10px + 2vmin)',
 };
