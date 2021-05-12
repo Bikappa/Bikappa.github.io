@@ -4,7 +4,8 @@ import {
   Paper,
   darken,
   Box,
-  BoxProps
+  BoxProps,
+  Grid
 } from "@material-ui/core";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import {
@@ -51,8 +52,9 @@ const useStyles = makeStyles((theme: Theme) => {
     introCardGrid: {
       flexGrow: 1,
       fontSize: theme.typography.fontSize,
-      paddingLeft: '10vw',
-      paddingRight: '10vw',
+      marginLeft: '10vw',
+      marginRight: '10vw',
+      overflowY: 'auto',
     },
     connection: {
       flexGrow: 1,
@@ -110,7 +112,6 @@ export function IntroductionSlide() {
     )
   }
 
-
   const CardHeader = (props: BoxProps) => {
     const { children } = props;
 
@@ -119,76 +120,79 @@ export function IntroductionSlide() {
       <Spacer mt={1} mb={3} />
     </Box>
   }
-  return <Box display='flex' flexDirection='column' className={classes.slide} justifyContent='space-between' height='93vh'>
+  return <Box display='flex' flexDirection='column' className={classes.slide} justifyContent='space-between'>
     <h1>Hi, I'm Luca</h1>
 
-    <Box display='flex' className={classes.introCardGrid} justifyContent='space-around'>
-      <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' flexBasis='33.33%'>
-        <Box mt={10} mb={3} >
-          <IntroCard
-            content={<>
-              <CardHeader><FaceOutlined fontSize='large' /></CardHeader>
-              I'm happy when I understand the world around me. I'm satisfied when I can use that knowledge to realize things
-            </>
-            }
-            footer={<p>
+    <Grid container className={classes.introCardGrid} minHeight='90vh' >
+      <Grid item xs={12} sm={4} >
+        <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em'  height='100%'>
+          <Box mt={10} mb={3}>
+            <IntroCard
+              content={<>
+                <CardHeader><FaceOutlined fontSize='large' /></CardHeader>
+                I'm happy when I understand the world around me. I'm satisfied when I can use that knowledge to realize things
+              </>
+              }
+              footer={<p>
 
-            </p>}
-          />
-        </Box>
-        <div className={classes.connection} />
-        <Box mt={3} mb={3} display='flex' alignItems='center' className={classes.factButton}>
-          <a href='https://goo.gl/maps/NdAcWEFFzw62KRzq5' target='blank' rel='noopener' >
-            <LocationOnOutlined fontSize='large' style={{ verticalAlign: 'middle' }} />Born in Verona, Italy
-          </a>
-        </Box>
+              </p>}
+            />
+          </Box>
+          <div className={classes.connection} />
+          <Box mt={3} mb={3} display='flex' alignItems='center' className={classes.factButton}>
+            <a href='https://goo.gl/maps/NdAcWEFFzw62KRzq5' target='blank' rel='noopener' >
+              <LocationOnOutlined fontSize='large' style={{ verticalAlign: 'middle' }} />Born in Verona, Italy
+            </a>
+          </Box>
 
-        <div className={classes.connection} />
-        <Box mt={3} mb={6} display='flex' alignItems='center' onClick={handleAgeClick} className={classes.factButton}>
-          <AccessTime fontSize='large' style={{ verticalAlign: 'middle' }} /> {`${age.toFormat(ageUnit.format)} ${ageUnit.name} ago`}
-        </Box>
-      </Box>
-
-      <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' flexBasis='33.33%'>
-        <Box mt={16} mb={3} display='flex' alignItems='center' className={classes.factButton}>
-          <AccountBalance fontSize='large' /> M.Sc. in Computer Engineering &middot; University of Padua
-        </Box>
-        <div className={classes.connection} />
-        <Box mt={3} mb={13}>
-          <IntroCard
-            content={<>
-              <CardHeader><SchoolOutlined fontSize='large' /></CardHeader>
-              Some time ago I realized I like computer science, so I pursued a degree in computer science engineering, and got it
-            </>}
-          />
-        </Box>
-      </Box>
-      <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' flexBasis='33.33%' maxWidth='33%'>
-        <Box maxHeight='230px' overflow='hidden' borderRadius={5} mt={3} mb={3}>
-          <Box mt='-115px'>
-            <img alt='Travel' width='100%' src='https://lh3.googleusercontent.com/HGHrioS-mqNzMKvxoJwu7vrTj5K67ozuay6nVOmwuVDeSv7A82iUIaTkOkAk5Mnlycg0SMNOjlnVERcKILr7AQxn75bkHyXOfr9fUvGKS3p2QmoYR4ns95rOU-tsDgeo0W4kZR-tZRxcEtLBLKXGr2gTSKCR0YxwUMaz7d5-9peOQL4XUfl6zgYUlHsKVYLKrktP4TsoTYxBilNS1e7lKprayRYXiKF-chDjBpQFqBQUUstJkqCZowjfmmuvtF1uyj54kb_Vicui-O12fdRfp53eydTc-RiWmhPWaXMKdolzP8DiBxmV7cuBqaKsPrGNzH-gRCbHY7zFzf-aN7IL6DVf3IeTRCMMHWRptYwUJhogF22hhpiA3bSithHcUyc5xbXWuXSPcoVAnv3bGG4lpqfcxwRwPaaHoa5uosPU-k-gZ5n6UOSeYNFp-b_6Q9WgJvuPJOe0gQl0hKvd64U8pUeay7CcNhXV_Pv784pzHdzYBkmXJ89aRYb-Z3PyeDZpNlGXPsdS_qsw2jxgppl6NPHGyzee3l2g9utQJktnZKVdG2TSjvS7AUMTh2gmhLIoyu5nABcObVINTamWv0WH5nttOXu-8rTbVWZbTVmLU7XV7Ej8ZuFqbeHy0ZsL9yjvA1vwRmgxnWSeRZU3unjdtPoV1xss0RP5PNXmNIsrhvbnPrWpSjdMPCr1Y436UEwBPRQMbocxTzpv5DrMXKTHOAQq3Q=s937-no?authuser=0' ></img>
+          <div className={classes.connection} />
+          <Box mt={3} mb={6} display='flex' alignItems='center' onClick={handleAgeClick} className={classes.factButton}>
+            <AccessTime fontSize='large' style={{ verticalAlign: 'middle' }} /> {`${age.toFormat(ageUnit.format)} ${ageUnit.name} ago`}
           </Box>
         </Box>
-
-
-        <div className={classes.connection} />
-        <Box mt={3} mb={3}>
-          <IntroCard
-            content={<>
-              <CardHeader><ExploreOutlined fontSize='large' /></CardHeader>
-              Besides work, I look for new things to enjoy, new places to discover, projects to start and never finish.
-              I'm eager to learn science more and I'm especially affascinated by robototics as it connects 3 worlds I like,
-              computer science, electronics and physics.
-            </>}
-          />
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' height='100%'>
+          <Box mt={16} mb={3} display='flex' alignItems='center' className={classes.factButton}>
+            <AccountBalance fontSize='large' /> M.Sc. in Computer Engineering &middot; University of Padua
+          </Box>
+          <div className={classes.connection} />
+          <Box mt={3} mb={13}>
+            <IntroCard
+              content={<>
+                <CardHeader><SchoolOutlined fontSize='large' /></CardHeader>
+                Some time ago I realized I like computer science, so I pursued a degree in computer science engineering, and got it
+              </>}
+            />
+          </Box>
         </Box>
-        <div className={classes.connection} />
-        <Box mt={3} mb={3} display='flex' alignItems='center' className={classes.factButton}>
-          <a href='https://goo.gl/maps/ACNzUbZdLYzJS93e6' target='blank' rel='noopener' >
-            <HomeOutlined fontSize='large' style={{ verticalAlign: 'middle' }} />Located in Berlin, Germany
-          </a>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Box display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' flexGrow={1} padding='1em' height='100%'>
+          <Box maxWidth='85%' borderRadius={5} mt={3} mb={3} overflow='hidden'>
+            <Box mt='-115px'>
+              <img alt='Travel' width='100%' src='https://lh3.googleusercontent.com/HGHrioS-mqNzMKvxoJwu7vrTj5K67ozuay6nVOmwuVDeSv7A82iUIaTkOkAk5Mnlycg0SMNOjlnVERcKILr7AQxn75bkHyXOfr9fUvGKS3p2QmoYR4ns95rOU-tsDgeo0W4kZR-tZRxcEtLBLKXGr2gTSKCR0YxwUMaz7d5-9peOQL4XUfl6zgYUlHsKVYLKrktP4TsoTYxBilNS1e7lKprayRYXiKF-chDjBpQFqBQUUstJkqCZowjfmmuvtF1uyj54kb_Vicui-O12fdRfp53eydTc-RiWmhPWaXMKdolzP8DiBxmV7cuBqaKsPrGNzH-gRCbHY7zFzf-aN7IL6DVf3IeTRCMMHWRptYwUJhogF22hhpiA3bSithHcUyc5xbXWuXSPcoVAnv3bGG4lpqfcxwRwPaaHoa5uosPU-k-gZ5n6UOSeYNFp-b_6Q9WgJvuPJOe0gQl0hKvd64U8pUeay7CcNhXV_Pv784pzHdzYBkmXJ89aRYb-Z3PyeDZpNlGXPsdS_qsw2jxgppl6NPHGyzee3l2g9utQJktnZKVdG2TSjvS7AUMTh2gmhLIoyu5nABcObVINTamWv0WH5nttOXu-8rTbVWZbTVmLU7XV7Ej8ZuFqbeHy0ZsL9yjvA1vwRmgxnWSeRZU3unjdtPoV1xss0RP5PNXmNIsrhvbnPrWpSjdMPCr1Y436UEwBPRQMbocxTzpv5DrMXKTHOAQq3Q=s937-no?authuser=0' ></img>
+            </Box>
+          </Box>
+          <div className={classes.connection} />
+          <Box mt={3} mb={3}>
+            <IntroCard
+              content={<>
+                <CardHeader><ExploreOutlined fontSize='large' /></CardHeader>
+                Besides work, I look for new things to enjoy, new places to discover, projects to start and never finish.
+                I'm eager to learn science more and I'm especially affascinated by robototics as it connects 3 worlds I like,
+                computer science, electronics and physics.
+              </>}
+            />
+          </Box>
+          <div className={classes.connection} />
+          <Box mt={3} mb={3} display='flex' alignItems='center' className={classes.factButton}>
+            <a href='https://goo.gl/maps/ACNzUbZdLYzJS93e6' target='blank' rel='noopener' >
+              <HomeOutlined fontSize='large' style={{ verticalAlign: 'middle' }} />Located in Berlin, Germany
+            </a>
+          </Box>
         </Box>
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   </Box >
 }

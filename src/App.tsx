@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   appHeader: {
     textAlign: 'center',
+    backgroundColor: theme.palette.background.default,
   },
   logo: {
     height: '30vh',
@@ -80,21 +81,23 @@ function InsideTheme() {
 
   const [scrolled, setScrolled] = useState(false);
 
-  const [lastScrollDir, setLastScrollDir] = useState(0)
+  const [lastScrollDirection, setLastScrollDirection] = useState(0)
   const handleScroll = useCallback((e: WheelEvent | Event) => {
 
     if (e instanceof WheelEvent) {
       if (window.scrollY === 0 && e.deltaY < 0) {
         setScrolled(false)
       } else {
-        setLastScrollDir(e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0))
+        setLastScrollDirection(e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0))
       }
 
     } else {
       setScrolled((prev) => {
-        if (window.scrollY > 0 && lastScrollDir === 1) {
+        console.log(document.body.scrollTop,  document.documentElement.scrollTop )
+        return document.body.scrollTop > 40 || document.documentElement.scrollTop  > 40;
+        if (window.scrollY > 0) {
           return true
-        } else if (window.scrollY === 0 && lastScrollDir === -1) {
+        } else if (window.scrollY === 0 && lastScrollDirection === -1) {
           return false
         }
         return prev
@@ -102,16 +105,16 @@ function InsideTheme() {
       })
     }
 
-  }, [setScrolled, lastScrollDir])
+  }, [setScrolled, lastScrollDirection])
 
   useEffect(() => {
 
     document.addEventListener('scroll', handleScroll)
 
-    document.addEventListener('wheel', handleScroll)
+   // document.addEventListener('wheel', handleScroll)
     return () => {
       document.removeEventListener('scroll', handleScroll)
-      document.removeEventListener('wheel', handleScroll)
+     // document.removeEventListener('wheel', handleScroll)
     }
   })
 
@@ -194,7 +197,7 @@ function Landing(props: {
       //reduce the space held by the header, so next slide enter the view
       .to(spaceHolderRef.current, {
         duration: 0.8,
-        height: '7vh',
+        marginTop: '-93vh',
         ease: 'power2'
       }, 0.5)
 
@@ -212,15 +215,15 @@ function Landing(props: {
   }, [collapsed, tween])
 
   return <>
-    <Box 
-    component='header' 
-    ref={headerRef }  
-    {...joinClasses(classes.slide, classes.appHeader)} 
-    height='100vh' 
-    width='100vw' 
-    position='fixed' 
-    top='0px'
-    justifyContent='stretch'
+    <Box
+      component='header'
+      ref={headerRef}
+      {...joinClasses(classes.slide, classes.appHeader)}
+      height='100vh'
+      width='100vw'
+      position='fixed'
+      top='0px'
+      justifyContent='stretch'
     >
       <Box flexGrow={1} minHeight='1vh' />
       <Box>
@@ -231,7 +234,7 @@ function Landing(props: {
         <Typography ref={nameRef} {...joinClasses(classes.name)} variant='h4'>
           Luca Bianconi
         </Typography>
-        <Box {...{ ref: spacerRef }}>
+        <Box ref={spacerRef}>
           <Spacer />
         </Box>
         <Typography ref={titleRef} className={classes.title} variant='h5'>
